@@ -3,7 +3,7 @@ use Moose::Role;
 
 our $VERSION = '0.01';
 
-our $singleton = sub {
+my $singleton = sub {
     my $self    = shift;
     my $methods = shift || {};
     
@@ -16,7 +16,7 @@ our $singleton = sub {
     $meta->rebless_instance( $self );
 };
 
-sub make_singleton        { $_[0]->$singleton }
+sub become_singleton      { $_[0]->$singleton }
 
 sub add_singleton_method  { $_[0]->$singleton({ $_[1] => $_[2] }) }
 
@@ -35,7 +35,7 @@ __END__
 
 =head1 NAME
 
-MooseX::SingletonMethod - Singleton Method role
+MooseX::SingletonMethod - Role providing Singleton Method option
 
 =head1 VERSION
 
@@ -44,15 +44,23 @@ Version 0.01
 
 =head1 SYNOPSIS
 
-Simple example....
+Simple usage example....
 
-    class Animal with MooseX::SingletonMethod {
-        method walk { "unknown" }
-    }
-
-    my $baz = Animal->new;
-    $baz->add_singleton_method( yep => sub { 'yeppers!' } );
-
+    package Baz;
+    use Moose;
+    with 'MooseX::SingletonMethod';
+    no Moose;
+    
+    package main;
+    my $baz = Baz->new;
+    my $foo = Baz->new;
+    
+    # add singleton method called "baz" just to $baz and not to Baz class
+    $baz->add_singleton_method( baz => sub { 'baz!' } ); 
+    
+    say $baz->baz;   # => 'baz'
+    say $foo->baz;   # ERROR: Can't locate object method "baz"....
+    
 
 =head1 DESCRIPTION
 
@@ -61,6 +69,12 @@ Simple example....
 Bit about what this is.
 Point to blog posts perhaps?
 
+    class Animal with MooseX::SingletonMethod {
+        method walk { "unknown" }
+    }
+
+    my $baz = Animal->new;
+    $baz->add_singleton_method( yep => sub { 'yeppers!' } );
 
 =head1 EXPORT
 
@@ -69,7 +83,7 @@ None
 
 =head1 METHODS
 
-=head2 make_singleton
+=head2 become_singleton
 =head2 add_singleton_method
 =head2 add_singleton_methods
 
