@@ -64,17 +64,68 @@ Simple usage example....
 
 =head1 DESCRIPTION
 
-=head2 Singleton Method
+=head2 What is a "Singleton Method?"
 
-Bit about what this is.
-Point to blog posts perhaps?
+TBD.
 
-    class Animal with MooseX::SingletonMethod {
-        method walk { "unknown" }
-    }
 
-    my $baz = Animal->new;
-    $baz->add_singleton_method( yep => sub { 'yeppers!' } );
+=head2 What is "MooseX::SingletonMethod"?
+
+Using roles you can already create Singleton Methods with Moose:  
+
+=over 4
+
+=item L<http://transfixedbutnotdead.com/2009/06/03/using-moose-roles-to-create-singleton-methods/>
+
+=item L<http://transfixedbutnotdead.com/2009/06/10/roles-singleton-methods-moosexdeclare/>
+
+=item L<http://transfixedbutnotdead.com/2009/06/19/moose-fairy-dust/>
+
+=item L<http://transfixedbutnotdead.com/2009/06/28/moose-fairy-dust-now-with-diagrams/>
+
+=item L<http://transfixedbutnotdead.com/2009/07/07/moose-singleton-method-now-without-roles/>
+
+=back
+
+
+MooseX::SingletonMethod simple adds a nicety wrapper (role!) around this.
+
+There are three methods available to create Singleton Methods using MooseX::SingletonMethod.  Here are some examples using L<MooseX::Declare>:
+
+    use MooseX::Declare;  
+  
+    class FooBarBaz with MooseX::SingletonMethod {  
+        method comes_with { "comes with FooBarBaz class" }  
+    }  
+  
+    # one way to create singleton method....  
+    my $foo = FooBarBaz->new;  
+    $foo->become_singleton;                   # make $foo a singleton  
+    $foo->meta->add_method( foo => 'foo!' );  # add method "foo" using meta  
+  
+    # and another.....  
+    my $bar = FooBarBaz->new;  
+    $bar->add_singleton_method( bar => sub { 'bar!' } );  
+  
+    # and finally multiple methods....  
+    my $baz = FooBarBaz->new;  
+    $baz->add_singleton_methods(  
+        baz1 => sub { 'baz1!' },  
+        baz2 => sub { 'baz2!' },  
+    );
+    
+    # Methods each object now has:
+    #
+    # $foo  ->   [ comes_with, foo ]
+    # $bar  ->   [ comes_with, bar ]
+    # $baz  ->   [ comes_with, baz1, baz2 ]
+ 
+
+=head2 Things to note
+
+Each time add_singleton_method or add_singleton_methods is called it creates a new anonymous class which the object is blessed into.
+
+If you want to add more methods to already bless anon class then simply use ->meta->add_method like in above $foo example.
 
 =head1 EXPORT
 
@@ -84,8 +135,27 @@ None
 =head1 METHODS
 
 =head2 become_singleton
+
+Makes the object a singleton (by creating an anonymous class which the object is blessed with):
+
+    $baz->become_singleton;
+    
+
 =head2 add_singleton_method
+
+Adds a singleton method to this object (same as above + creates prescribed method):
+
+    $bar->add_singleton_method( bar => sub { 'bar!' } );  
+
 =head2 add_singleton_methods
+
+Same as above except allows multiple method declaration:
+
+    $baz->add_singleton_methods(  
+        baz1 => sub { 'baz1!' },  
+        baz2 => sub { 'baz2!' },  
+    );
+
 
 
 =head1 AUTHOR
