@@ -5,8 +5,7 @@ use Test::More tests => 20;
 
 {
     package A;
-    use Moose;
-    with 'MooseX::SingletonMethod';
+    use MooseX::SingletonMethod;
     sub a { 'a' };
 }
 

@@ -1,9 +1,14 @@
 #!perl -T
 
-use Test::More tests => 1;
 
+# stop innocent warning from Moosex Exporter about being main
+package NotMain;
 BEGIN {
+    use Test::More tests => 1;
 	use_ok( 'MooseX::SingletonMethod' );
+	diag( "Testing MooseX::SingletonMethod $MooseX::SingletonMethod::VERSION, Perl $], $^X" );
+    sub dummy {}
 }
 
-diag( "Testing MooseX::SingletonMethod $MooseX::SingletonMethod::VERSION, Perl $], $^X" );
+package main;
+NotMain::dummy;

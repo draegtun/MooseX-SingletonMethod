@@ -1,32 +1,26 @@
 package MooseX::SingletonMethod;
-use Moose::Role;
+our $VERSION = '0.02';
 
-our $VERSION = '0.01';
-
-my $singleton = sub {
-    my $self    = shift;
-    my $methods = shift || {};
-    
-    my $meta = $self->meta->create_anon_class(
-        superclasses => [ $self->meta->name ],
-        methods      => $methods,
-    );
-    
-    $meta->add_method( meta => sub { $meta } );
-    $meta->rebless_instance( $self );
-};
-
-sub become_singleton      { $_[0]->$singleton }
-
-sub add_singleton_method  { $_[0]->$singleton({ $_[1] => $_[2] }) }
-
-sub add_singleton_methods { 
-    my $self = shift;
-    $self->$singleton({ @_ });
-}
-
-
-no Moose::Role;
+use Moose ();  
+use Moose::Exporter;  
+use Moose::Util::MetaRole;  
+  
+Moose::Exporter->setup_import_methods( also => 'Moose' );  
+  
+sub init_meta {  
+    shift;  
+    my %options = @_;  
+  
+    my $meta = Moose->init_meta( %options );  
+  
+    Moose::Util::MetaRole::apply_base_class_roles(  
+        for_class => $options{ for_class },  
+        roles     => [ 'MooseX::SingletonMethod::Role' ], 
+    );  
+  
+    return $meta;  
+}  
+  
 1;
 
 
@@ -35,11 +29,11 @@ __END__
 
 =head1 NAME
 
-MooseX::SingletonMethod - Role providing Singleton Method option
+MooseX::SingletonMethod - Moose with Singleton Method facility.
 
 =head1 VERSION
 
-Version 0.01
+Version 0.02
 
 
 =head1 SYNOPSIS
@@ -47,9 +41,8 @@ Version 0.01
 Simple usage example....
 
     package Baz;
-    use Moose;
-    with 'MooseX::SingletonMethod';
-    no Moose;
+    use MooseX::SingletonMethod;    # <= Moose with SingletonMethod facility attached
+    no MooseX::SingletonMethod;
     
     package main;
     my $baz = Baz->new;
@@ -60,7 +53,14 @@ Simple usage example....
     
     say $baz->baz;   # => 'baz'
     say $foo->baz;   # ERROR: Can't locate object method "baz"....
-    
+
+
+Alternative to MooseX::SingletonMethod you can just use L<MooseX::SingletonMethod::Role> directly like so...
+
+    package Baz;
+    use Moose;
+    with 'MooseX::SingletonMethod::Role';
+    no Moose;
 
 =head1 DESCRIPTION
 
@@ -88,13 +88,14 @@ Using roles you can already create Singleton Methods with Moose:
 =back
 
 
-MooseX::SingletonMethod simple adds a nicety wrapper (role!) around this.
+MooseX::SingletonMethod simple adds a nicety wrapper around this.
 
-There are three methods available to create Singleton Methods using MooseX::SingletonMethod.  Here are some examples using L<MooseX::Declare>:
+There are three methods available to create Singleton Methods using MooseX::SingletonMethod.  
+Here are some examples using L<MooseX::Declare> with L<MooseX::SingletonMethod::Role>:
 
     use MooseX::Declare;  
   
-    class FooBarBaz with MooseX::SingletonMethod {  
+    class FooBarBaz with MooseX::SingletonMethod::Role {  
         method comes_with { "comes with FooBarBaz class" }  
     }  
   
@@ -156,6 +157,9 @@ Same as above except allows multiple method declaration:
         baz2 => sub { 'baz2!' },  
     );
 
+=head2 init_meta
+
+Internal Moose method
 
 
 =head1 AUTHOR
