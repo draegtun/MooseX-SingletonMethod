@@ -2,7 +2,8 @@ MooseX-SingletonMethod
 
 This distribution includes the following modules:
 
-    MooseX::SingletonMethod     (0.01)
+    MooseX::SingletonMethod       (0.02)
+    MooseX::SingletonMethod::Role (0.02)
 
 
 INSTALLATION
@@ -19,6 +20,7 @@ DEPENDENCIES
 
 This module requires these other modules and libraries:
 
+    Moose
 	Moose::Role
     	
     	
