@@ -16,7 +16,7 @@ my $builder = Module::Build->new(
     meta_merge => {  
       resources => {  
           bugtracker => 'http://rt.cpan.org/NoAuth/Bugs.html?Dist=MooseX-SingletonMethod',  
-          repository => 'http://github.com/draegtun/moosex-singletonmethod/tree/master', 
+          repository => 'http://github.com/draegtun/MooseX-SingletonMethod/tree/master', 
       }  
     },
 );

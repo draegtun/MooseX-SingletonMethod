@@ -1,8 +1,11 @@
 Build.PL
 Changes
+lib/MooseX/SingletonMethod.pm
 MANIFEST
 README
-lib/MooseX/SingletonMethod.pm
 t/00-load.t
+t/01-basic.t
+t/boilerplate.t
 t/pod-coverage.t
 t/pod.t
+META.yml
