@@ -1,7 +1,7 @@
 package MooseX::SingletonMethod::Role;
 use Moose::Role;
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 my $singleton = sub {
     my $self    = shift;
@@ -35,7 +35,7 @@ __END__
 
 =head1 NAME
 
-MooseX::SingletonMethod - Role providing Singleton Method option
+MooseX::SingletonMethod::Role - Role providing Singleton Method option
 
 =head1 VERSION
 
